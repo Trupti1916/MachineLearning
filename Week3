@@ -10,3 +10,80 @@ plotDecisionBoundary.m - Function to plot classifier's decision boundary
 *costFunction.m - Logistic regression cost function
 *predict.m - Logistic regression prediction function
 *costFunctionReg.m - Regularized logistic regression cost function
+---------------------------------------------
+plotData.m
+---------------------------------------------
+function plotData(X, y)
+% Create New Figure
+figure(1); hold on;
+
+ % Find Indices of Positive and Negative Examples
+    pos = find(y==1);
+    neg = find(y == 0);
+
+    % Plot Examples
+    plot(X(pos, 1), X(pos, 2), 'k+','LineWidth', 2, 'MarkerSize', 7);
+    plot(X(neg, 1), X(neg, 2), 'ko', 'MarkerFaceColor', 'y', 'MarkerSize', 7);
+
+hold off;
+end
+---------------------------------------------
+sigmoid.m
+---------------------------------------------
+function g = sigmoid(z)
+%SIGMOID Compute sigmoid function
+%   g = SIGMOID(z) computes the sigmoid of z.
+
+% You need to return the following variables correctly 
+g = zeros(size(z));
+g=1./(1+exp(-z));
+end
+---------------------------------------------
+costFunction.m
+---------------------------------------------
+function [J, grad] = costFunction(theta, X, y)
+% Initialize some useful values
+m = length(y); % number of training examples
+
+% You need to return the following variables correctly 
+J = 0;
+grad = zeros(size(theta));
+
+z = X * theta;
+h_x = sigmoid(z);
+J = 1/m * sum((-y.*log(h_x)) - ((1-y).*log(1-h_x)));
+grad = 1/m * (X' * (h_x - y))
+end
+---------------------------------------------
+predict.m
+---------------------------------------------
+function p = predict(theta, X)
+
+m = size(X, 1); % Number of training examples
+% You need to return the following variables correctly
+p = zeros(m, 1);
+
+h_x = sigmoid(theta'.* X);
+p = (h_x >= 0.5);
+end
+---------------------------------------------
+costFunctionReg.m
+---------------------------------------------
+function [J, grad] = costFunctionReg(theta, X, y, lambda)
+% Initialize some useful values
+m = length(y); % number of training examples
+
+% You need to return the following variables correctly 
+J = 0;
+grad = zeros(size(theta));
+
+  z = X * theta;      % m x 1
+  h_x = sigmoid(z);  % m x 1 
+  
+  reg_term = (lambda/(2*m)) * sum(theta(2:end).^2);
+  
+  J = (1/m)*sum((-y.*log(h_x))-((1-y).*log(1-h_x))) + reg_term; % scalar
+  
+  grad(1) = (1/m)* (X(:,1)'*(h_x-y));                                  % 1 x 1
+  grad(2:end) = (1/m)* (X(:,2:end)'*(h_x-y))+(lambda/m)*theta(2:end);  % n x 1
+end
